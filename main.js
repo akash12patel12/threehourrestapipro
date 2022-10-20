@@ -1,4 +1,5 @@
-var baseurl = "https://crudcrud.com/api/f1542f4e67d5421e99e612c97562c42f/data/";
+var baseurl = "https://crudcrud.com/api/114996a918c24b62abfe8c9335860a16/data";
+
 async function addexpense(e) {
   e.preventDefault();
   const cat = e.target.cat.value;
@@ -20,8 +21,14 @@ async function addexpense(e) {
 
 getAll();
 async function getAll() {
-  var users = await axios.get(baseurl);
+  // var users = await axios.get(baseurl);
+  var users = await axios(baseurl, {
+    Headers: {
+      "app-id": "6350fab77ea582428bd742ee",
+    },
+  });
   users = users.data;
+
   let t = document.getElementById("t");
   t.innerHTML = "";
   users.forEach((user) => {
@@ -32,20 +39,23 @@ async function getAll() {
 }
 
 async function deleteexpense(e) {
-    // console.log("Delete called");
+  // console.log("Delete called");
   let id = e.target.value;
-//  console.log(id);
-  await axios.delete(baseurl, id)
+  //  console.log(id);
+  await axios
+    .delete(`${baseurl}/${id}`)
     .then((res) => {
       console.log(res);
-    //   getAll();
+        getAll();
     })
     .catch((err) => console.log(err));
 }
 
-async function editexpense(e){
-    let doc = await axios.get(baseurl+e.target.val)
-    console.log(doc.data);
-    // await deleteexpense(e);
-
+async function editexpense(e) {
+  let doc = await axios.get(`${baseurl}/${e.target.value}`);
+  // console.log(doc.data);
+  await deleteexpense(e);
+  document.getElementById('amount').value = doc.data.amount;
+  document.getElementById('cat').value = doc.data.cat;
+  document.getElementById('desc').value = doc.data.desc;
 }
